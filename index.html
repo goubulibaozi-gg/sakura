@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>sakura的小窝</title>
+    <style>
+        :root {
+            --bg-color: #121318;
+            --surface-color: #1e1f25;
+            --surface-variant: #2b2d35;
+            
+            /* 动态主题色（默认 Monet 蓝） */
+            --primary-color: #a8c7fa;
+            
+            --text-primary: #e2e2e9;
+            --text-secondary: #90909a;
+            --divider-color: #33353e;
+            --radius-large: 28px;
+            --radius-small: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1.2rem 3rem;
+            display: flex;
+            justify-content: center;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        /* 顶部大标题与个人信息 */
+        .header-section {
+            padding: 1rem 0.5rem 0.5rem;
+        }
+
+        .main-title {
+            font-size: 2.2rem;
+            font-weight: 400;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 0.5rem 0;
+        }
+
+        .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: var(--surface-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .user-name {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .user-handle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Group 标题 */
+        .group-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.6rem;
+            padding-left: 0.8rem;
+            letter-spacing: 0.3px;
+            transition: color 0.3s ease;
+        }
+
+        /* 低调组标题 */
+        .group-label-subtle {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        /* Material You 分组容器 */
+        .md-card-group {
+            background-color: var(--surface-color);
+            border-radius: var(--radius-large);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 列表项 */
+        .md-list-item {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            position: relative;
+            background-color: transparent;
+        }
+
+        .md-list-item:not(:last-child) {
+            border-bottom: 1px solid var(--divider-color);
+        }
+
+        .item-title {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .item-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        /* 可点击的按钮项 */
+        a.md-list-item-btn {
+            text-decoration: none;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 1.2rem;
+            color: var(--text-primary);
+            transition: background-color 0.15s ease;
+        }
+
+        a.md-list-item-btn:hover {
+            background-color: var(--surface-variant);
+        }
+
+        .btn-content {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .arrow-icon {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        /* 底部极简设置面板样式 */
+        .setting-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 1.2rem;
+        }
+
+        .setting-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .theme-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .color-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.15);
+        }
+
+        .color-dot.active {
+            border-color: #ffffff;
+            transform: scale(1.1);
+        }
+
+        .custom-color-input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .custom-color-input::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        .custom-color-input::-webkit-color-swatch {
+            border: 1px solid var(--divider-color);
+            border-radius: 50%;
+        }
+
+        /* 视频/照片容器 */
+        .video-wrapper, .photo-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: var(--radius-small);
+            overflow: hidden;
+            background-color: var(--surface-variant);
+            margin-top: 0.4rem;
+        }
+
+        .video-wrapper {
+            aspect-ratio: 16 / 9;
+            background-color: #000;
+        }
+
+        .photo-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* 底部仓库链接 */
+        .footer-repo {
+            display: flex;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        .repo-link {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            transition: opacity 0.2s, color 0.2s;
+        }
+
+        .repo-link:hover {
+            opacity: 1;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 顶栏部分 -->
+        <div class="header-section">
+            <h1 class="main-title">sakura 的小窝</h1>
+            <div class="user-profile">
+                <img class="avatar" src="touxiang.jpg" alt="sakura">
+                <div class="user-info">
+                    <div class="user-name">sakura 澪</div>
+                    <div class="user-handle">sakura3922love@gmail.com</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关于我 -->
+        <div>
+            <div class="group-label">关于</div>
+            <div class="md-card-group">
+                <div class="md-list-item">
+                    <div class="item-title">个人简介</div>
+                    <div class="item-desc">✦ Welcome to Sakura's Castle! ✦
+喵！这里是 sakura 的小窝喵，现在还没想好写什么喵，到处看看吧喵
+</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 媒体分享 -->
+        <div>
+            <div class="group-label">精选内容</div>
+            <div class="md-card-group">
+                <div class="md-list-item">
+                    <div class="item-title">都给我过来看mygo😋</div>
+                    <div class="video-wrapper">
+                        <iframe src="//player.bilibili.com/player.html?bvid=BV1F2Ngz8E9o&high_quality=1&danmaku=0&as_wide=1" 
+                                style="width: 100%; height: 100%; border: none; display: block;" 
+                                scrolling="no" frameborder="0" allowfullscreen="true">
+                        </iframe>
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 35px; z-index: 10;" title="已禁止跳转 B 站喵"></div>
+                    </div>
+                </div>
+                <div class="md-list-item">
+                    <div class="item-title">精选照片</div>
+                    <div class="photo-wrapper">
+                        <img src="yinhui.jpg" alt="yinhui" class="photo-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 联系方式 -->
+        <div>
+            <div class="group-label">联系方式</div>
+            <div class="md-card-group">
+                <a href="https://x.com/Sakura39mc" class="md-list-item-btn" target="_blank">
+                    <div class="btn-content">🌐 X (Twitter)</div>
+                    <div class="arrow-icon">›</div>
+                </a>
+                <a href="mailto:baozimiao356@gmail.com" class="md-list-item-btn" target="_blank">
+                    <div class="btn-content">📧 电子邮箱</div>
+                    <div class="arrow-icon">›</div>
+                </a>
+                <a href="https://t.me/Sakura_JM" class="md-list-item-btn" target="_blank">
+                    <div class="btn-content">✈️ Telegram</div>
+                    <div class="arrow-icon">›</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 底部低调设置选项 -->
+        <div style="margin-top: 1rem;">
+            <div class="group-label group-label-subtle">偏好选项</div>
+            <div class="md-card-group">
+                <div class="setting-item-row">
+                    <span class="setting-title">主题调色盘</span>
+                    <div class="theme-picker-wrapper">
+                        <div class="color-dot active" style="background-color: #a8c7fa;" data-color="#a8c7fa" title="默认蓝"></div>
+                        <div class="color-dot" style="background-color: #f2b8c6;" data-color="#f2b8c6" title="樱花粉"></div>
+                        <div class="color-dot" style="background-color: #a8dab5;" data-color="#a8dab5" title="薄荷绿"></div>
+                        <div class="color-dot" style="background-color: #d0bcff;" data-color="#d0bcff" title="灵动紫"></div>
+                        <input type="color" id="customColorPicker" class="custom-color-input" value="#a8c7fa" title="自定义取色">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部开源链接 -->
+        <div class="footer-repo">
+            <a href="https://github.com/goubulibaozi-gg/sakura" class="repo-link" target="_blank">
+                ✨ goubulibaozi-gg/sakura
+            </a>
+        </div>
+    </div>
+
+    <!-- 动态取色逻辑 -->
+    <script>
+        const root = document.documentElement;
+        const colorDots = document.querySelectorAll('.color-dot');
+        const customColorPicker = document.getElementById('customColorPicker');
+
+        function setThemeColor(color) {
+            root.style.setProperty('--primary-color', color);
+            customColorPicker.value = color;
+            localStorage.setItem('md_theme_color', color);
+
+            colorDots.forEach(dot => {
+                if (dot.dataset.color.toLowerCase() === color.toLowerCase()) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        colorDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                setThemeColor(dot.dataset.color);
+            });
+        });
+
+        customColorPicker.addEventListener('input', (e) => {
+            setThemeColor(e.target.value);
+        });
+
+        const savedColor = localStorage.getItem('md_theme_color');
+        if (savedColor) {
+            setThemeColor(savedColor);
+        }
+    </script>
+
+</body>
+</html>
